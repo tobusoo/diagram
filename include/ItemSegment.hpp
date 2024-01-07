@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 #include <CircleSegment.hpp>
 #include <Item.hpp>
 
@@ -9,6 +11,7 @@ protected:
     sf::Text m_title_text;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    void calculate_text_pos();
 
 public:
     ItemSegment(
@@ -22,6 +25,5 @@ public:
             size_t points = 80);
 
     void set_font(sf::Font& font);
-    void calculate_text_pos();
     void rotate(float angle) noexcept;
 };
