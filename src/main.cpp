@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
     const float radius = 300;
     CircleDiagram diagram({700, 400}, diagram_title, radius, items);
 
-    char title[100];
+    char title[100] = {0};
     float value = 0;
     int degree = 0;
 

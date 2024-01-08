@@ -12,8 +12,6 @@ target_sources(
     main.cpp
 )
 
-find_package(SFML 2.5 COMPONENTS graphics system window REQUIRED)
-
 target_link_libraries(
   ${target_name}
   PRIVATE
