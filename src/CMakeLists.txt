@@ -1,6 +1,7 @@
 set(target_name diagram)
 
 add_executable(${target_name})
+set_property(TARGET ${target_name} PROPERTY CXX_STANDARD 17)
 
 target_sources(
     ${target_name}
