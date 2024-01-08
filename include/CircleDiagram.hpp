@@ -27,6 +27,7 @@ public:
             std::vector<Item>& items);
     CircleDiagram(const char* title, float radius, std::vector<Item>& items);
 
+    void set_font(std::string font_path) noexcept;
     void set_name(std::string title) noexcept;
     void rotate(float degree) noexcept;
     void set_items(std::vector<Item>& items);

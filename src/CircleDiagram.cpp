@@ -29,15 +29,19 @@ CircleDiagram::CircleDiagram(
         std::vector<Item>& items)
     : m_title(title), m_position(position), m_radius(radius)
 {
-    std::string font_path = "resources/coolvetica.rg-regular.otf";
+    set_items(items);
+}
+
+void CircleDiagram::set_font(std::string font_path) noexcept
+{
     if (!font.loadFromFile(font_path)) {
+        is_font_loaded = false;
         std::cerr << "[ERROR] CircleDiagram: Failed to load font " << font_path
                   << '\n';
     } else {
         is_font_loaded = true;
         calculate_name_pos();
     }
-    set_items(items);
 }
 
 void CircleDiagram::set_name(std::string title) noexcept

@@ -110,8 +110,8 @@ void parse_file(std::string filename, std::vector<Item>& items)
 
 void imgui_create_table(std::vector<Item>& items)
 {
-    ImGui::SetNextWindowPos({0, 255});
-    ImGui::SetNextWindowSize({200, 800 - 255});
+    ImGui::SetNextWindowPos({0, 290});
+    ImGui::SetNextWindowSize({200, 800 - 290});
 
     ImGui::Begin("Table");
     ImGuiTabBarFlags flags = ImGuiTableFlags_Borders;
@@ -186,10 +186,24 @@ int main(int argc, char* argv[])
         std::cerr << "Failed to init ImGui window\n";
         exit(EXIT_FAILURE);
     }
+    const char* fonts_path[] = {
+            "resources/roboto.regular.ttf",
+            "resources/coolvetica.rg-regular.otf",
+            "resources/open-sans.regular.ttf",
+    };
+    const char* fonts[] = {
+            "Roboto",
+            "Coolvetica",
+            "Open sans",
+    };
+
+    const char* current_font = fonts[0];
+    const char* current_font_path = fonts_path[0];
 
     const float radius = 300;
     CircleDiagram diagram(
             {700, 400}, default_diagram_name.c_str(), radius, items);
+    diagram.set_font(current_font_path);
 
     char title[100] = {0};
     char diagram_name[100] = {0};
@@ -216,8 +230,15 @@ int main(int argc, char* argv[])
         }
 
         ImGui::SFML::Update(window, deltaClock.restart());
+        ImGuiStyle& style = ImGui::GetStyle();
+        float w = ImGui::CalcItemWidth();
+        float spacing = style.ItemInnerSpacing.x;
+        float button_sz = ImGui::GetFrameHeight();
+
+        ImGui::PushItemWidth(w - spacing * 2.0f - button_sz * 2.0f);
+
         ImGui::SetNextWindowPos({0, 0});
-        ImGui::SetNextWindowSize({200, 255});
+        ImGui::SetNextWindowSize({200, 290});
         ImGui::Begin("Options");
 #ifdef _WIN32
         if (ImGui::Button("Select input file")) {
@@ -243,30 +264,45 @@ int main(int argc, char* argv[])
         ImGui::Text("Enter Title and Value");
         ImGui::InputText("Title", title, IM_ARRAYSIZE(title));
         ImGui::InputFloat("Value", &value);
-        if (ImGui::BeginTable("Items", 2)) {
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            if (ImGui::Button("Add")) {
-                if (!(value == 0 || title[0] == '\0')) {
-                    items.push_back(Item(value, title));
-                    diagram.set_items(items);
-                    value = 0;
-                    memset(title, 0, IM_ARRAYSIZE(title));
-                }
+        if (ImGui::Button("Add")) {
+            if (!(value == 0 || title[0] == '\0')) {
+                items.push_back(Item(value, title));
+                diagram.set_items(items);
+                value = 0;
+                memset(title, 0, IM_ARRAYSIZE(title));
             }
-            ImGui::TableSetColumnIndex(1);
-            if (ImGui::Button("Remove")) {
-                if (title[0] != '\0') {
-                    remove_item(items, title);
-                    diagram.set_items(items);
-                    memset(title, 0, IM_ARRAYSIZE(title));
-                }
-            }
-            ImGui::EndTable();
         }
-
+        ImGui::SameLine(0, spacing);
+        if (ImGui::Button("Remove")) {
+            if (title[0] != '\0') {
+                remove_item(items, title);
+                diagram.set_items(items);
+                memset(title, 0, IM_ARRAYSIZE(title));
+            }
+        }
         if (ImGui::Button("Screenshot"))
             screenshot(window, diagram, "diagram.png");
+        ImGuiComboFlags flags = ImGuiComboFlags_NoArrowButton;
+
+        ImGui::Text("Select font:");
+        if (ImGui::BeginCombo(
+                    "##custom combo",
+                    current_font,
+                    ImGuiComboFlags_NoArrowButton)) {
+            for (int n = 0; n < IM_ARRAYSIZE(fonts); n++) {
+                bool is_selected = (current_font == fonts[n]);
+                if (ImGui::Selectable(fonts[n], is_selected)) {
+                    current_font = fonts[n];
+                    current_font_path = fonts_path[n];
+                    diagram.set_font(current_font_path);
+                }
+                if (is_selected) {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+
         ImGui::End();
 
         imgui_create_table(items);
