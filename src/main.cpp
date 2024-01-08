@@ -11,6 +11,8 @@
 #include <CircleSegment.hpp>
 #include <ItemSegment.hpp>
 
+#include <cxxopts.hpp>
+
 #ifdef _WIN32
 #include <windows.h>
 
@@ -144,12 +146,34 @@ int change_diagram_name(ImGuiInputTextCallbackData* data)
 int main(int argc, char* argv[])
 {
     std::vector<Item> items;
-    const char* input_file;
 
-    if (argc == 2) {
-        input_file = argv[1];
-        parse_file(input_file, items);
+    cxxopts::Options options("diagram");
+    options.add_options()(
+            "i,input", "Path to input file", cxxopts::value<std::string>())(
+            "n,name",
+            "Diagram name",
+            cxxopts::value<std::string>()->default_value("Diagram name"))(
+            "h,help", "Print usage");
+    cxxopts::ParseResult result;
+    try {
+        result = options.parse(argc, argv);
+    } catch (cxxopts::exceptions::exception& e) {
+        std::cout << e.what() << '\n';
+        std::cout << options.help() << std::endl;
+        return 0;
     }
+
+    if (result.count("help")) {
+        std::cout << options.help() << std::endl;
+        return 0;
+    }
+
+    if (result.count("input")) {
+        parse_file(result["input"].as<std::string>(), items);
+    }
+
+    std::string default_diagram_name;
+    default_diagram_name = result["name"].as<std::string>();
 
     sf::ContextSettings sett;
     sett.antialiasingLevel = 8;
@@ -163,13 +187,13 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    const char* default_diagram_name = "name";
     const float radius = 300;
-    CircleDiagram diagram({700, 400}, default_diagram_name, radius, items);
+    CircleDiagram diagram(
+            {700, 400}, default_diagram_name.c_str(), radius, items);
 
     char title[100] = {0};
     char diagram_name[100] = {0};
-    strcpy(diagram_name, default_diagram_name);
+    strcpy(diagram_name, default_diagram_name.c_str());
     float value = 0;
     int degree = 0;
 

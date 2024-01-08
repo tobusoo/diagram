@@ -32,3 +32,4 @@ ENDIF()
 
 
 target_include_directories( ${target_name} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_include_directories( ${target_name} PUBLIC ${CMAKE_SOURCE_DIR}/external)
