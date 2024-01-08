@@ -56,6 +56,7 @@ void CircleDiagram::rotate(float degree) noexcept
 
 void CircleDiagram::set_items(std::vector<Item>& items)
 {
+    prev_rotate_degree = 0;
     m_segments.clear();
     std::vector<sf::Color> colors
             = {sf::Color(52, 168, 83),

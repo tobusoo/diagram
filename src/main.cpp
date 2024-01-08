@@ -11,6 +11,32 @@
 #include <CircleSegment.hpp>
 #include <ItemSegment.hpp>
 
+#ifdef _WIN32
+#include <windows.h>
+
+#include <commdlg.h>
+
+char* get_filename_from_user()
+{
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.lpstrFilter = "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+    ofn.lpstrFile = new char[MAX_PATH];
+    ofn.lpstrFile[0] = '\0';
+    ofn.nMaxFile = MAX_PATH;
+    ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+    ofn.lpstrDefExt = "txt";
+
+    if (GetOpenFileName(&ofn) == TRUE) {
+        return ofn.lpstrFile;
+    } else {
+        return NULL;
+    }
+}
+
+#endif // _WIN32
+
 void screenshot(
         sf::RenderWindow& window, CircleDiagram& diagram, const char* filename)
 {
@@ -136,6 +162,7 @@ int main(int argc, char* argv[])
     CircleDiagram diagram({700, 400}, diagram_title, radius, items);
 
     char title[100] = {0};
+    char diagram_name[100] = {0};
     float value = 0;
     int degree = 0;
 
@@ -159,6 +186,16 @@ int main(int argc, char* argv[])
 
         ImGui::SFML::Update(window, deltaClock.restart());
         ImGui::Begin("Options");
+#ifdef _WIN32
+        if (ImGui::Button("Select input file")) {
+            char* filename = get_filename_from_user();
+            if (filename) {
+                items.clear();
+                parse_file(filename, items);
+                diagram.set_items(items);
+            }
+        }
+#endif
         ImGui::Text("Rotate diagram:");
         ImGui::SliderInt(" ", &degree, 0, 360);
         ImGui::Text("Enter Title and Value");
