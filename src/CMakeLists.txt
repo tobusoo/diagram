@@ -21,4 +21,14 @@ target_link_libraries(
     ImGui-SFML::ImGui-SFML
 )
 
+IF (WIN32)
+  add_custom_target(copy-files ALL
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${PROJECT_SOURCE_DIR}/resources
+      ${PROJECT_BINARY_DIR}/resources
+      COMMENT "COPY RESOURCE FILES"
+  )
+ENDIF()
+
+
 target_include_directories( ${target_name} PUBLIC ${CMAKE_SOURCE_DIR}/include)
