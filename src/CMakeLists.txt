@@ -25,7 +25,7 @@ IF (WIN32)
   add_custom_target(copy-files ALL
       COMMAND ${CMAKE_COMMAND} -E copy_directory
       ${PROJECT_SOURCE_DIR}/resources
-      ${PROJECT_BINARY_DIR}/resources
+      ${PROJECT_BINARY_DIR}/bin/resources
       COMMENT "COPY RESOURCE FILES"
   )
 ENDIF()
