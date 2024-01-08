@@ -8,6 +8,19 @@ void CircleDiagram::draw(
         target.draw(i);
     target.draw(m_title_text);
 }
+void CircleDiagram::calculate_name_pos() noexcept
+{
+    auto font_size = m_title_text.getCharacterSize();
+    auto str_len = m_title.size();
+    float indent_x = (float)str_len * font_size / 4;
+    float indent_y = m_radius + 100;
+    sf::Vector2f text_pos = {m_position.x - indent_x, m_position.y - indent_y};
+
+    m_title_text.setString(m_title);
+    m_title_text.setFont(font);
+    m_title_text.setPosition(text_pos);
+    m_title_text.setFillColor(sf::Color::Black);
+}
 
 CircleDiagram::CircleDiagram(
         sf::Vector2f position,
@@ -22,18 +35,15 @@ CircleDiagram::CircleDiagram(
                   << '\n';
     } else {
         is_font_loaded = true;
-        auto font_size = m_title_text.getCharacterSize();
-        auto str_len = m_title.size();
-        float indent_x = (float)str_len * font_size / 4;
-        float indent_y = radius + 100;
-        sf::Vector2f text_pos = {position.x - indent_x, position.y - indent_y};
-
-        m_title_text.setString(m_title);
-        m_title_text.setFont(font);
-        m_title_text.setPosition(text_pos);
-        m_title_text.setFillColor(sf::Color::Black);
+        calculate_name_pos();
     }
     set_items(items);
+}
+
+void CircleDiagram::set_name(std::string title) noexcept
+{
+    m_title = title;
+    calculate_name_pos();
 }
 
 CircleDiagram::CircleDiagram(

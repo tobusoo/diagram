@@ -10,5 +10,9 @@ cmake --build build
 
 ## Run
 ```sh
-build/bin/diagram "Diagram demo" input.txt
+build/bin/diagram
+```
+or
+```sh
+build/bin/diagram input.txt
 ```

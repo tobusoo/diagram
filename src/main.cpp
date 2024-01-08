@@ -128,22 +128,24 @@ void imgui_create_table(std::vector<Item>& items)
     ImGui::End();
 }
 
+int change_diagram_name(ImGuiInputTextCallbackData* data)
+{
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackEdit) {
+        auto diagram = (CircleDiagram*)data->UserData;
+        diagram->set_name(data->Buf);
+    }
+
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     std::vector<Item> items;
-    const char* diagram_title;
     const char* input_file;
 
-    if (argc == 3) {
-        diagram_title = argv[1];
-        input_file = argv[2];
+    if (argc == 2) {
+        input_file = argv[1];
         parse_file(input_file, items);
-    } else if (argc == 2) {
-        diagram_title = argv[1];
-    } else {
-        std::cerr << "Usage: " << argv[0];
-        std::cerr << " <Diagram name> <input_file (OPTIONAL)>\n";
-        exit(EXIT_FAILURE);
     }
 
     sf::ContextSettings sett;
@@ -158,11 +160,13 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
+    const char* default_diagram_name = "name";
     const float radius = 300;
-    CircleDiagram diagram({700, 400}, diagram_title, radius, items);
+    CircleDiagram diagram({700, 400}, default_diagram_name, radius, items);
 
     char title[100] = {0};
     char diagram_name[100] = {0};
+    strcpy(diagram_name, default_diagram_name);
     float value = 0;
     int degree = 0;
 
@@ -196,8 +200,17 @@ int main(int argc, char* argv[])
             }
         }
 #endif
+        ImGui::Text("Diagram name:");
+        ImGui::InputText(
+                "name",
+                diagram_name,
+                IM_ARRAYSIZE(diagram_name),
+                ImGuiInputTextFlags_CallbackEdit,
+                change_diagram_name,
+                (void*)&diagram);
+
         ImGui::Text("Rotate diagram:");
-        ImGui::SliderInt(" ", &degree, 0, 360);
+        ImGui::SliderInt("rotate", &degree, 0, 360);
         ImGui::Text("Enter Title and Value");
         ImGui::InputText("Title", title, IM_ARRAYSIZE(title));
         ImGui::InputFloat("Value", &value);

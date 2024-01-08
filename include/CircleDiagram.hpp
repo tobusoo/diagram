@@ -17,6 +17,8 @@ private:
     int prev_rotate_degree = 0;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+    void calculate_name_pos() noexcept;
+
 public:
     CircleDiagram(
             sf::Vector2f position,
@@ -25,6 +27,7 @@ public:
             std::vector<Item>& items);
     CircleDiagram(const char* title, float radius, std::vector<Item>& items);
 
+    void set_name(std::string title) noexcept;
     void rotate(float degree) noexcept;
     void set_items(std::vector<Item>& items);
 };
