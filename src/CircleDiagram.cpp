@@ -41,6 +41,8 @@ void CircleDiagram::set_font(std::string font_path) noexcept
     } else {
         is_font_loaded = true;
         calculate_name_pos();
+        for (auto& i : m_segments)
+            i.set_font(font);
     }
 }
 
