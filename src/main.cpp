@@ -108,6 +108,9 @@ void parse_file(std::string filename, std::vector<Item>& items)
 
 void imgui_create_table(std::vector<Item>& items)
 {
+    ImGui::SetNextWindowPos({0, 255});
+    ImGui::SetNextWindowSize({200, 800 - 255});
+
     ImGui::Begin("Table");
     ImGuiTabBarFlags flags = ImGuiTableFlags_Borders;
     flags |= ImGuiTableFlags_Resizable;
@@ -189,6 +192,8 @@ int main(int argc, char* argv[])
         }
 
         ImGui::SFML::Update(window, deltaClock.restart());
+        ImGui::SetNextWindowPos({0, 0});
+        ImGui::SetNextWindowSize({200, 255});
         ImGui::Begin("Options");
 #ifdef _WIN32
         if (ImGui::Button("Select input file")) {
